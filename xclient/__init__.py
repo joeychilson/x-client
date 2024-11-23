@@ -1,0 +1,27 @@
+DEFAULT_USER_AGENT = (
+    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+    "AppleWebKit/537.36 (KHTML, like Gecko) "
+    "Chrome/58.0.3029.110 Safari/537.36"
+)
+
+BASE_URL = "https://x.com/i/api/graphql"
+
+BLUE_VERIFIED_FOLLOWERS_OPERATION = "UdtZY8FOW3ULVnjDU52BVg/BlueVerifiedFollowers"
+FOLLOWERS_OPERATION = "gwv4MK0diCpAJ79u7op1Lg/Followers"
+FOLLOWING_OPERATION = "eWTmcJY3EMh-dxIR7CYTKw/Following"
+
+FAVORITE_TWEET_OPERATION = "lI07N6Otwv1PhnEgXILM7A/FavoriteTweet"
+UNFAVORITE_TWEET_OPERATION = "ZYKSe-w7KEslx3JhSIk5LA/UnfavoriteTweet"
+
+CREATE_RETWEET_OPERATION = "ojPdsZsimiJrUGLR1sjUtA/CreateRetweet"
+DELETE_RETWEET_OPERATION = "iQtK4dl5hBmXewYZuEOKVw/DeleteRetweet"
+
+USER_BY_SCREEN_NAME_OPERATION = "laYnJPCAcVo0o6pzcnlVxQ/UserByScreenName"
+
+USERS_BY_REST_IDS_OPERATION = "lc85bOG5T3IIS4u485VtBg/UsersByRestIds"
+
+USER_TWEETS_OPERATION = "Tg82Ez_kxVaJf7OPbUdbCg/UserTweets"
+HOME_LATEST_TIMELINE_OPERATION = "HyuV8ml52TYmyUjyrDq1CQ/HomeLatestTimeline"
+
+CREATE_TWEET_OPERATION = "znq7jUAqRjmPj7IszLem5Q/CreateTweet"
+DELETE_TWEET_OPERATION = "VaenaVgh5q5ih7kvyVjgtg/DeleteTweet"
