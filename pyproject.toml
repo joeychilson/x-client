@@ -2,7 +2,7 @@
 name = "xclient"
 version = "0.1.0"
 description = "A Python client for the public X API."
-license = "MIT"
+license = { file = "LICENSE" }
 readme = "README.md"
 authors = [
     {name = 'Joey Chilson', email = 'joeychilson@outlook.com'}
