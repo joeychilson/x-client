@@ -9,7 +9,7 @@ Note: This should be used for personal use only. It's very unreliable due to X b
 ```python
 import asyncio
 
-from xclient.client import XAPIError, XClient
+from xclient import XError, XClient
 
 
 async def main():
@@ -22,7 +22,7 @@ async def main():
         try:
             create_tweet = await client.create_tweet(text="Hello, world!")
             print(create_tweet)
-        except XAPIError as e:
+        except XError as e:
             print(f"Error: {e}")
         except Exception as e:
             print(f"Unexpected error: {e}")

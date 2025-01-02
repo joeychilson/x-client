@@ -3,23 +3,6 @@ from typing import Any, Dict, List, Optional, Self, Union
 
 import httpx
 
-from xclient import (
-    BASE_URL,
-    BLUE_VERIFIED_FOLLOWERS_OPERATION,
-    CREATE_RETWEET_OPERATION,
-    CREATE_TWEET_OPERATION,
-    DEFAULT_USER_AGENT,
-    DELETE_RETWEET_OPERATION,
-    DELETE_TWEET_OPERATION,
-    FAVORITE_TWEET_OPERATION,
-    FOLLOWERS_OPERATION,
-    FOLLOWING_OPERATION,
-    HOME_LATEST_TIMELINE_OPERATION,
-    UNFAVORITE_TWEET_OPERATION,
-    USER_BY_SCREEN_NAME_OPERATION,
-    USER_TWEETS_OPERATION,
-    USERS_BY_REST_IDS_OPERATION,
-)
 from xclient.models.actions import FavoriteResult, RetweetResult
 from xclient.models.error import Error, ErrorResponse
 from xclient.models.timeline import Timeline
@@ -33,7 +16,30 @@ from xclient.models.tweet import (
 from xclient.models.user import UserResults
 
 
-class XAPIError(Exception):
+DEFAULT_USER_AGENT = (
+    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+    "AppleWebKit/537.36 (KHTML, like Gecko) "
+    "Chrome/58.0.3029.110 Safari/537.36"
+)
+
+BASE_URL = "https://x.com/i/api/graphql"
+
+BLUE_VERIFIED_FOLLOWERS_OPERATION = "UdtZY8FOW3ULVnjDU52BVg/BlueVerifiedFollowers"
+FOLLOWERS_OPERATION = "gwv4MK0diCpAJ79u7op1Lg/Followers"
+FOLLOWING_OPERATION = "eWTmcJY3EMh-dxIR7CYTKw/Following"
+FAVORITE_TWEET_OPERATION = "lI07N6Otwv1PhnEgXILM7A/FavoriteTweet"
+UNFAVORITE_TWEET_OPERATION = "ZYKSe-w7KEslx3JhSIk5LA/UnfavoriteTweet"
+CREATE_RETWEET_OPERATION = "ojPdsZsimiJrUGLR1sjUtA/CreateRetweet"
+DELETE_RETWEET_OPERATION = "iQtK4dl5hBmXewYZuEOKVw/DeleteRetweet"
+USER_BY_SCREEN_NAME_OPERATION = "laYnJPCAcVo0o6pzcnlVxQ/UserByScreenName"
+USERS_BY_REST_IDS_OPERATION = "lc85bOG5T3IIS4u485VtBg/UsersByRestIds"
+USER_TWEETS_OPERATION = "Tg82Ez_kxVaJf7OPbUdbCg/UserTweets"
+HOME_LATEST_TIMELINE_OPERATION = "HyuV8ml52TYmyUjyrDq1CQ/HomeLatestTimeline"
+CREATE_TWEET_OPERATION = "znq7jUAqRjmPj7IszLem5Q/CreateTweet"
+DELETE_TWEET_OPERATION = "VaenaVgh5q5ih7kvyVjgtg/DeleteTweet"
+
+
+class XError(Exception):
     def __init__(self, error: Error):
         self.error = error
         super().__init__(f"X API Error: {error.message}")
@@ -101,7 +107,7 @@ class XClient:
                 error_data = response.json()
                 error_response = ErrorResponse.model_validate(error_data)
                 if error_response.errors:
-                    raise XAPIError(error_response.errors[0])
+                    raise XError(error_response.errors[0])
             except json.JSONDecodeError:
                 response.raise_for_status()
             except ValueError as e:
@@ -240,9 +246,7 @@ class XClient:
             "responsive_web_enhance_cards_enabled": False,
         }
 
-        response = await self._get(
-            BLUE_VERIFIED_FOLLOWERS_OPERATION, variables, features
-        )
+        response = await self._get(BLUE_VERIFIED_FOLLOWERS_OPERATION, variables, features)
         timeline_data = response["data"]["user"]["result"]["timeline"]["timeline"]
         return Timeline.model_validate(timeline_data)
 
@@ -430,9 +434,7 @@ class XClient:
         }
         field_toggles = {"withAuxiliaryUserLabels": False}
 
-        response = await self._get(
-            USER_BY_SCREEN_NAME_OPERATION, variables, features, field_toggles
-        )
+        response = await self._get(USER_BY_SCREEN_NAME_OPERATION, variables, features, field_toggles)
         return UserResults.model_validate(response["data"]["user"])
 
     async def get_user_tweets(
@@ -531,12 +533,11 @@ class XClient:
             httpx.HTTPError: If there's a network or HTTP-related error
             ValueError: If the error response format is invalid
         """
-        variables = {
+        variables: Dict[str, Any] = {
             "count": count,
             "includePromotedContent": include_promoted_content,
             "latestControlAvailable": latest_control_available,
         }
-
         if cursor:
             variables["cursor"] = cursor
 
@@ -569,9 +570,7 @@ class XClient:
             "responsive_web_enhance_cards_enabled": False,
         }
 
-        response = await self._post(
-            HOME_LATEST_TIMELINE_OPERATION, variables=variables, features=features
-        )
+        response = await self._post(HOME_LATEST_TIMELINE_OPERATION, variables=variables, features=features)
         return Timeline.model_validate(response["data"]["home"]["home_timeline_urt"])
 
     async def favorite_tweet(self, tweet_id: str) -> FavoriteResult:
@@ -612,9 +611,7 @@ class XClient:
         response = await self._post(UNFAVORITE_TWEET_OPERATION, variables=variables)
         return FavoriteResult.model_validate(response["data"])
 
-    async def create_retweet(
-        self, tweet_id: str, dark_request: bool = False
-    ) -> RetweetResult:
+    async def create_retweet(self, tweet_id: str, dark_request: bool = False) -> RetweetResult:
         """Retweet a tweet.
 
         Args:
@@ -633,13 +630,9 @@ class XClient:
 
         response = await self._post(CREATE_RETWEET_OPERATION, variables=variables)
         result = response["data"]["create_retweet"]["retweet_results"]["result"]
-        return RetweetResult(
-            rest_id=result["rest_id"], full_text=result["legacy"]["full_text"]
-        )
+        return RetweetResult(rest_id=result["rest_id"], full_text=result["legacy"]["full_text"])
 
-    async def delete_retweet(
-        self, tweet_id: str, dark_request: bool = False
-    ) -> RetweetResult:
+    async def delete_retweet(self, tweet_id: str, dark_request: bool = False) -> RetweetResult:
         """Remove a retweet.
 
         Args:
@@ -661,9 +654,7 @@ class XClient:
 
         response = await self._post(DELETE_RETWEET_OPERATION, variables=variables)
         result = response["data"]["unretweet"]["source_tweet_results"]["result"]
-        return RetweetResult(
-            rest_id=result["rest_id"], full_text=result["legacy"]["full_text"]
-        )
+        return RetweetResult(rest_id=result["rest_id"], full_text=result["legacy"]["full_text"])
 
     async def create_tweet(
         self,
@@ -706,13 +697,9 @@ class XClient:
                 elif isinstance(media_item, MediaEntity):
                     media_entities.append(media_item)
                 else:
-                    raise ValueError(
-                        "Media items must be either strings or MediaEntity objects"
-                    )
+                    raise ValueError("Media items must be either strings or MediaEntity objects")
 
-            media = CreateTweetMedia(
-                media_entities=media_entities, possibly_sensitive=possibly_sensitive
-            )
+            media = CreateTweetMedia(media_entities=media_entities, possibly_sensitive=possibly_sensitive)
 
         reply = None
         if reply_to_tweet_id:
@@ -761,13 +748,9 @@ class XClient:
             variables=variables.model_dump(exclude_none=True),
             features=features,
         )
-        return ItemResult.model_validate(
-            response["data"]["create_tweet"]["tweet_results"]
-        )
+        return ItemResult.model_validate(response["data"]["create_tweet"]["tweet_results"])
 
-    async def delete_tweet(
-        self, tweet_id: str, dark_request: bool = False
-    ) -> DeleteTweetResult:
+    async def delete_tweet(self, tweet_id: str, dark_request: bool = False) -> DeleteTweetResult:
         """Delete a tweet.
 
         Args:
