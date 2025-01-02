@@ -1,8 +1,14 @@
-# xclient
+# x-client
 
 A Python client for the public X API.
 
 Note: This should be used for personal use only. It's very unreliable due to X blocking requests often.
+
+## Installation
+
+```bash
+uv add x-client
+```
 
 ## Example
 

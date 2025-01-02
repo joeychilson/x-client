@@ -3,7 +3,7 @@ requires = ["hatchling", "hatch-fancy-pypi-readme"]
 build-backend = "hatchling.build"
 
 [project]
-name = "xclient"
+name = "x-client"
 version = "0.0.1"
 description = "A Python client for the public X API."
 license = { file = "LICENSE" }
@@ -36,10 +36,10 @@ lint = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/joeychilson/xclient"
-Documentation = "https://github.com/joeychilson/xclient/blob/main/README.md"
-Repository = "https://github.com/joeychilson/xclient.git"
-Issues = "https://github.com/joeychilson/xclient/issues"
+Homepage = "https://github.com/joeychilson/x-client"
+Documentation = "https://github.com/joeychilson/x-client/blob/main/README.md"
+Repository = "https://github.com/joeychilson/x-client.git"
+Issues = "https://github.com/joeychilson/x-client/issues"
 
 [tool.hatch.build.targets.wheel]
 packages = ["xclient"]
