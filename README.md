@@ -1,4 +1,4 @@
-# x-client
+# x-api-client
 
 A Python client for the public X API.
 
@@ -7,7 +7,7 @@ Note: This should be used for personal use only. It's very unreliable due to X b
 ## Installation
 
 ```bash
-uv add x-client
+uv add x-api-client
 ```
 
 ## Example

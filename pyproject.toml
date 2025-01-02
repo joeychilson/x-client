@@ -3,7 +3,7 @@ requires = ["hatchling", "hatch-fancy-pypi-readme"]
 build-backend = "hatchling.build"
 
 [project]
-name = "x-client"
+name = "x-api-client"
 version = "0.0.1"
 description = "A Python client for the public X API."
 license = { file = "LICENSE" }
